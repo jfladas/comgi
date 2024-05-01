@@ -29,6 +29,7 @@ window.onload = function () {
                     gl.useProgram(shaderProgram);
 
                     let verticesBuffer = gl.createBuffer();
+                    let colorsBuffer = gl.createBuffer();
 
                     clear(grey);
 
@@ -42,33 +43,17 @@ window.onload = function () {
 
                     function drawBirdo() {
                         clear(grey);
-                        drawRectangle([-0.4, 0.7, -0.05, 0], red);
-                        drawRectangle([0.05, 0.7, 0.4, 0], red);
-                        drawRectangle([-0.3, 0.55, 0.3, 0], red);
-                        drawRectangle([-0.1, 0.5, 0.3, 0], pink);
-                        drawRectangle([-0.2, 0.1, 0.6, -0.5], pink);
-                        drawRectangle([-0.4, -0.4, 0.2, -1], pink);
-                        drawRectangle([-0.05, 0.45, 0.3, 0], white);
-                        drawRectangle([0, 0.4, 0.1, 0.1], black);
-                        drawRectangle([0.15, 0.4, 0.25, 0.1], black);
-                        drawRectangle([0.35, 0, 0.55, -0.4], black);
+
+                        drawRectangle([-0.7, -0.7, 0.7, 0.7,], [red, white, pink, black]);
                     }
 
                     function drawYoshi() {
                         clear(grey);
-                        drawRectangle([-0.1, 0.5, 0.3, 0], green);
-                        drawRectangle([-0.2, 0.1, 0.6, -0.5], green);
-                        drawRectangle([-0.4, -0.4, 0.2, -1], green);
-                        drawRectangle([-0.05, 0.45, 0.3, 0], white);
-                        drawRectangle([0, 0.4, 0.1, 0.1], black);
-                        drawRectangle([0.15, 0.4, 0.25, 0.1], black);
-                        drawRectangle([0.4, 0.05, 0.45, 0], black);
-                        drawRectangle([0.5, 0.05, 0.55, 0], black);
-                        drawRectangle([-0.55, -0.6, -0.35, -1], red);
-                        drawRectangle([0.6, -0.25, 1, -0.35], red);
+
+                        drawRectangle([-0.7, -0.7, 0.7, 0.7,], [green, black, red, white]);
                     }
 
-                    function drawRectangle(ver, col) {
+                    function drawRectangle(ver, colors) {
                         let vertices = [
                             ver[0], ver[1],
                             ver[2], ver[1],
@@ -76,17 +61,28 @@ window.onload = function () {
                             ver[0], ver[3]
                         ];
 
+                        // Bind and fill vertices buffer
                         gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
                         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
+                        // Bind and fill colors buffer
+                        gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors.flat()), gl.STATIC_DRAW);
+
                         let aVertexPositionId = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+                        let aVertexColorId = gl.getAttribLocation(shaderProgram, "aVertexColor");
+
+                        // Bind vertices buffer
+                        gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
                         gl.vertexAttribPointer(aVertexPositionId, 2, gl.FLOAT, false, 0, 0);
                         gl.enableVertexAttribArray(aVertexPositionId);
 
-                        let colorLocation = gl.getUniformLocation(shaderProgram, "color");
-                        gl.uniform4fv(colorLocation, col);
+                        // Bind colors buffer
+                        gl.bindBuffer(gl.ARRAY_BUFFER, colorsBuffer);
+                        gl.vertexAttribPointer(aVertexColorId, 4, gl.FLOAT, false, 0, 0);
+                        gl.enableVertexAttribArray(aVertexColorId);
 
-                        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+                        gl.drawArrays(gl.TRIANGLE_FAN, 0, vertices.length / 2);
                     }
 
                     function clear(col) {
