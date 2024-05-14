@@ -1,94 +1,102 @@
-// WebGL initialisieren
-function initWebGL() {
-    var canvas = document.getElementById("glCanvas");
-    var gl = canvas.getContext("webgl");
+var gl;
+var program;
+
+window.onload = function () {
+    var canvas = document.getElementById('pongCanvas');
+    gl = canvas.getContext('webgl');
     if (!gl) {
-        console.error("WebGL not supported, falling back on experimental-webgl");
-        gl = canvas.getContext("experimental-webgl");
-    }
-    if (!gl) {
-        alert("Your browser does not support WebGL");
+        console.error('WebGL not supported');
         return;
     }
 
-    // WebGL Programm erstellen und kompilieren
-    var vertexShaderSource = fetch('vertexShader.glsl').then(response => response.text());
-    var fragmentShaderSource = fetch('fragmentShader.glsl').then(response => response.text());
+    // Lade die Shader
+    var vsSource = loadShaderSource('vertexShader.glsl');
+    var fsSource = loadShaderSource('fragmentShader.glsl');
 
-    Promise.all([vertexShaderSource, fragmentShaderSource]).then(([vertexShaderSource, fragmentShaderSource]) => {
-        var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-        var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    // Kompiliere Shader
+    var vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+    var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-        var shaderProgram = createProgram(gl, vertexShader, fragmentShader);
-        gl.useProgram(shaderProgram);
+    // Erstelle und verlinke das Shader-Programm
+    program = createProgram(gl, vertexShader, fragmentShader);
 
-        // Matrizen definieren und an den Shader übergeben
-        var uProjectionMat = gl.getUniformLocation(shaderProgram, "uProjectionMat");
-        var uModelMat = gl.getUniformLocation(shaderProgram, "uModelMat");
-        var projectionMat = [
-            2 / canvas.width, 0, 0,
-            0, -2 / canvas.height, 0,
-            0, 0, 1
-        ];
-        gl.uniformMatrix3fv(uProjectionMat, false, new Float32Array(projectionMat));
+    // Definiere die Positionen der Eckpunkte des Quadrats
+    var vertices = [
+        -50, -50,
+        -50, 50,
+        50, -50,
+        50, 50
+    ];
 
-        var squareSize = 100.0;
-        var translation = [0, 0];
-        var modelMat = [
-            1, 0, 0,
-            0, 1, 0,
-            translation[0], translation[1], 1
-        ];
-        gl.uniformMatrix3fv(uModelMat, false, new Float32Array(modelMat));
+    // Erstelle ein Vertex Buffer Object (VBO) und lade die Eckpunkte
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-        // Quadrat zeichnen
-        var vertices = [
-            -squareSize / 2, -squareSize / 2,
-            squareSize / 2, -squareSize / 2,
-            squareSize / 2, squareSize / 2,
-            -squareSize / 2, squareSize / 2
-        ];
-        var vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Definiere das Attribut 'aPosition' im Shader
+    var positionAttributeLocation = gl.getAttribLocation(program, 'aPosition');
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-        var aVertexPosition = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-        gl.enableVertexAttribArray(aVertexPosition);
-        gl.vertexAttribPointer(aVertexPosition, 2, gl.FLOAT, false, 0, 0);
+    // Definition der Transformationsmatrizen
+    var w = canvas.width;
+    var h = canvas.height;
+    var uProjectionMat = [
+        2 / w, 0, 0,
+        0, -2 / h, 0,
+        0, 0, 1
+    ];
 
-        gl.clearColor(0.0, 0.0, 0.0, 1.0); // Hintergrundfarbe
-        gl.clear(gl.COLOR_BUFFER_BIT);
+    var uModelMat = [
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    ];
 
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-    });
+    // Übergeben der Matrizen an den Shader NACH gl.useProgram(program)
+    gl.useProgram(program); // Stelle sicher, dass das Shader-Programm aktiv ist
+    var projectionMatLocation = gl.getUniformLocation(program, 'uProjectionMat');
+    gl.uniformMatrix3fv(projectionMatLocation, false, uProjectionMat);
+
+    var modelMatLocation = gl.getUniformLocation(program, 'uModelMat');
+    gl.uniformMatrix3fv(modelMatLocation, false, uModelMat);
+
+    // Zeichne das Quadrat
+    gl.clearColor(0.0, 0.0, 0.0, 1.0); // Schwarzer Hintergrund
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+};
+
+// Hilfsfunktionen zum Laden von Shader-Quellcodes
+function loadShaderSource(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
+    xhr.send(null);
+    return xhr.responseText;
 }
 
-// Shader erstellen
+// Hilfsfunktionen zum Kompilieren und Verlinken von Shadern
 function createShader(gl, type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error("Shader compilation error: ", gl.getShaderInfoLog(shader));
-        return null;
+    var success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+    if (success) {
+        return shader;
     }
-    return shader;
+    console.error('Shader compilation failed:', gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
 }
 
-// Programm erstellen
 function createProgram(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error("Shader program linking error: ", gl.getProgramInfoLog(program));
-        return null;
+    var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    if (success) {
+        return program;
     }
-    return program;
+    console.error('Shader program linking failed:', gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
 }
-
-// WebGL initialisieren, wenn das DOM geladen ist
-document.addEventListener("DOMContentLoaded", function (event) {
-    initWebGL();
-});
