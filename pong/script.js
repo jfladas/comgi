@@ -20,23 +20,35 @@ window.onload = function () {
     // Erstelle und verlinke das Shader-Programm
     program = createProgram(gl, vertexShader, fragmentShader);
 
-    // Definiere die Positionen der Eckpunkte des Quadrats
-    var vertices = [
+    // Definiere die Positionen der Eckpunkte des ersten Quadrats
+    var vertices1 = [
         -50, -50,
         -50, 50,
         50, -50,
         50, 50
     ];
 
-    // Erstelle ein Vertex Buffer Object (VBO) und lade die Eckpunkte
-    var vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Erstelle ein Vertex Buffer Object (VBO) und lade die Eckpunkte für das erste Quadrat
+    var vertexBuffer1 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer1);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices1), gl.STATIC_DRAW);
+
+    // Definiere die Positionen der Eckpunkte des zweiten Quadrats
+    var vertices2 = [
+        -100, -100,
+        -100, 0,
+        0, -100,
+        0, 0
+    ];
+
+    // Erstelle ein Vertex Buffer Object (VBO) und lade die Eckpunkte für das zweite Quadrat
+    var vertexBuffer2 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices2), gl.STATIC_DRAW);
 
     // Definiere das Attribut 'aPosition' im Shader
     var positionAttributeLocation = gl.getAttribLocation(program, 'aPosition');
     gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
     // Definition der Transformationsmatrizen
     var w = canvas.width;
@@ -53,17 +65,24 @@ window.onload = function () {
         0, 0, 1
     ];
 
-    // Übergeben der Matrizen an den Shader NACH gl.useProgram(program)
-    gl.useProgram(program); // Stelle sicher, dass das Shader-Programm aktiv ist
+    // Übergeben der Matrizen an den Shader
+    gl.useProgram(program);
     var projectionMatLocation = gl.getUniformLocation(program, 'uProjectionMat');
     gl.uniformMatrix3fv(projectionMatLocation, false, uProjectionMat);
 
     var modelMatLocation = gl.getUniformLocation(program, 'uModelMat');
     gl.uniformMatrix3fv(modelMatLocation, false, uModelMat);
 
-    // Zeichne das Quadrat
+    // Zeichne das erste Quadrat
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Schwarzer Hintergrund
     gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer1);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    // Zeichne das zweite Quadrat
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer2);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
