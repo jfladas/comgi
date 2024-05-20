@@ -115,9 +115,10 @@ function updateScoreDisplay() {
 
 function checkWin() {
   if (score1 >= winningScore || score2 >= winningScore) {
-    let winner = score1 >= winningScore ? "Player 1" : "Player 2";
     updateScoreDisplay();
     gamePaused = true;
+    ball.x = 1000;
+    ball.y = 1000;
     setTimeout(resetGame, 3000);
   }
 }
@@ -151,7 +152,7 @@ function updateGame() {
     paddle1.y += 2;
   }
 
-  // Ball movements
+  // Update ball position
   ball.x += ball.speedx;
   ball.y += ball.speedy;
 
@@ -162,10 +163,21 @@ function updateGame() {
 
   // Collision with paddles
   if (
-    (ball.x - ball.dx / 2 <= paddle1.x + paddle1.dx / 2 && ball.y >= paddle1.y - paddle1.dy / 2 && ball.y <= paddle1.y + paddle1.dy / 2) ||
-    (ball.x + ball.dx / 2 >= paddle2.x - paddle2.dx / 2 && ball.y >= paddle2.y - paddle2.dy / 2 && ball.y <= paddle2.y + paddle2.dy / 2)
+    ball.x - ball.dx / 2 <= paddle1.x + paddle1.dx / 2 &&
+    ball.x - ball.dx / 2 >= paddle1.x - paddle1.dx / 2 && // Increase paddle hitbox
+    ball.y >= paddle1.y - paddle1.dy / 2 &&
+    ball.y <= paddle1.y + paddle1.dy / 2
   ) {
-    ball.speedx = -ball.speedx;
+    ball.speedx = Math.abs(ball.speedx); // Ensure the ball moves to the right
+  }
+
+  if (
+    ball.x + ball.dx / 2 >= paddle2.x - paddle2.dx / 2 &&
+    ball.x + ball.dx / 2 <= paddle2.x + paddle2.dx / 2 && // Increase paddle hitbox
+    ball.y >= paddle2.y - paddle2.dy / 2 &&
+    ball.y <= paddle2.y + paddle2.dy / 2
+  ) {
+    ball.speedx = -Math.abs(ball.speedx); // Ensure the ball moves to the left
   }
 
   // Points and reset
@@ -179,6 +191,7 @@ function updateGame() {
       ball.speedy = 1;
     }
   }
+
   if (ball.x > gl.canvas.width / 2) {
     score1++;
     checkWin();
@@ -190,6 +203,7 @@ function updateGame() {
     }
   }
 }
+
 
 // Updated drawing function
 function drawAnimated(timeStamp) {
