@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>PONG</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
@@ -19,60 +20,5 @@
 
     <script src="./script.js"></script>
 </body>
-
-<style>
-    @font-face {
-        font-family: 'pixel';
-        src: url('pixel.ttf') format('truetype');
-    }
-
-    body {
-        background-color: #310332;
-        color: #fde6fe;
-        font-family: 'pixel', sans-serif;
-        font-size: 1.5rem;
-    }
-
-    #title {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, calc(-50% - 300px));
-    }
-
-    #canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, calc(-50% + 25px));
-    }
-
-    #scoreboard {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 640px;
-        height: 480px;
-
-
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        margin-top: 20px;
-    }
-
-    #scoreboard div {
-        width: 100px;
-        display: flex;
-        justify-content: center;
-        transform: translate(0, -150px);
-
-        color: #310332;
-        font-size: 3rem;
-        font-weight: bold;
-
-    }
-</style>
 
 </html>

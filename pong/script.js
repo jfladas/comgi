@@ -45,9 +45,9 @@ function main(agl, asp) {
 
   // Set colors for each game element
   const ballColor = [1.0, 0.9, 1.0]; // "White"
-  const paddle1Color = [0.7, 0.4, 0.6]; // Pink
+  const paddle1Color = [0.8, 0.4, 0.6]; // Pink
   const paddle2Color = [0.5, 0.6, 0.9]; // Blue
-  const middleLineColor = [0.2, 0.0, 0.2]; // "Gray"
+  const middleLineColor = [0.4, 0.3, 0.5]; // "Gray"
 
   // Projection Matrix: Orthographic projection for a 100x100 square in the center of the screen
   const projectionMatrix = [
