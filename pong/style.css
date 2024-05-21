@@ -1,6 +1,7 @@
 :root {
     --light-purple: #fde6fe;
-    --dark-purple: rgb(102, 76.5, 127.5);
+    --purple: rgb(102, 76.5, 127.5);
+    --dark-purple: #0c000d;
 }
 
 @font-face {
@@ -9,13 +10,13 @@
 }
 
 body {
-    background-color: var(--dark-purple);
-    color: var(--light-purple);
+    background-color: var(--purple);
     font-family: 'pixel', sans-serif;
     font-size: 1.5rem;
 }
 
 #title {
+    color: var(--dark-purple);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -50,7 +51,7 @@ body {
     justify-content: center;
     transform: translate(0, -150px);
 
-    color: var(--dark-purple);
+    color: var(--purple);
     font-size: 3rem;
     font-weight: bold;
 
