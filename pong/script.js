@@ -62,7 +62,7 @@ function main(agl, asp) {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Initialize game objects
-  ball = { x: 0, y: 0, dx: 10, dy: 10, speedx: 1, speedy: 1, color: ballColor };
+  ball = { x: 0, y: 0, dx: 10, dy: 10, speedx: 1.5, speedy: 1.5, color: ballColor };
   paddle1 = { x: -gl.canvas.width / 2 + 40, y: 0, dx: 10, dy: 60, color: paddle1Color };
   paddle2 = { x: gl.canvas.width / 2 - 40, y: 0, dx: 10, dy: 60, color: paddle2Color };
   middleLine = { x: 0, y: 0, dx: 5, dy: 500, color: middleLineColor };
@@ -128,8 +128,8 @@ function resetGame() {
   score2 = 0;
   ball.x = 0;
   ball.y = 0;
-  ball.speedx = 1;
-  ball.speedy = 1;
+  ball.speedx = 1.5;
+  ball.speedy = 1.5;
   gamePaused = false;
   drawGameObjects();
 }
@@ -169,6 +169,8 @@ function updateGame() {
     ball.y <= paddle1.y + paddle1.dy / 2
   ) {
     ball.speedx = Math.abs(ball.speedx); // Ensure the ball moves to the right
+    ball.speedx *= 1.05; // Increase speed
+    ball.speedy *= 1.05; // Increase speed
   }
 
   if (
@@ -178,6 +180,8 @@ function updateGame() {
     ball.y <= paddle2.y + paddle2.dy / 2
   ) {
     ball.speedx = -Math.abs(ball.speedx); // Ensure the ball moves to the left
+    ball.speedx *= 1.05; // Increase speed
+    ball.speedy *= 1.05; // Increase speed
   }
 
   // Points and reset
