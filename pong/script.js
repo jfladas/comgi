@@ -17,7 +17,9 @@ let paddle2;
 let middleLine;
 let lastTime;
 let keysPressed = {};
+let touchControls = {};
 
+// Initialize scores and game state
 let score1 = 0;
 let score2 = 0;
 const winningScore = 5;
@@ -78,6 +80,16 @@ function main(agl, asp) {
     keysPressed[event.key] = false;
   });
 
+  // Event listeners for mobile controls
+  document.getElementById("p1-up").addEventListener("touchstart", () => touchControls["p1-up"] = true);
+  document.getElementById("p1-up").addEventListener("touchend", () => touchControls["p1-up"] = false);
+  document.getElementById("p1-down").addEventListener("touchstart", () => touchControls["p1-down"] = true);
+  document.getElementById("p1-down").addEventListener("touchend", () => touchControls["p1-down"] = false);
+  document.getElementById("p2-up").addEventListener("touchstart", () => touchControls["p2-up"] = true);
+  document.getElementById("p2-up").addEventListener("touchend", () => touchControls["p2-up"] = false);
+  document.getElementById("p2-down").addEventListener("touchstart", () => touchControls["p2-down"] = true);
+  document.getElementById("p2-down").addEventListener("touchend", () => touchControls["p2-down"] = false);
+
   window.requestAnimationFrame(drawAnimated);
   console.log("Animation started!");
 }
@@ -108,14 +120,14 @@ function drawGameObjects() {
   updateScoreDisplay();
 }
 
-function updateScoreDisplay() {
-  document.getElementById("score1").innerText = score1 >= winningScore ? "WIN" : score1;
-  document.getElementById("score2").innerText = score2 >= winningScore ? "WIN" : score2;
+function updateScoreDisplay(winner) {
+  document.getElementById("score1").innerText = winner === 1 ? "WIN!" : score1;
+  document.getElementById("score2").innerText = winner === 2 ? "WIN!" : score2;
 }
 
 function checkWin() {
   if (score1 >= winningScore || score2 >= winningScore) {
-    updateScoreDisplay();
+    updateScoreDisplay(score1 >= winningScore ? 1 : 2);
     gamePaused = true;
     ball.x = 1000;
     ball.y = 1000;
@@ -134,21 +146,20 @@ function resetGame() {
   drawGameObjects();
 }
 
-// Update game logic function
 function updateGame() {
   if (gamePaused) return;
 
   // Paddle movements
-  if (keysPressed["ArrowDown"] && paddle2.y > -gl.canvas.height / 2 + paddle2.dy / 2) {
+  if (keysPressed["ArrowDown"] || touchControls["p2-down"] && paddle2.y > -gl.canvas.height / 2 + paddle2.dy / 2) {
     paddle2.y -= 2;
   }
-  if (keysPressed["ArrowUp"] && paddle2.y < gl.canvas.height / 2 - paddle2.dy / 2) {
+  if (keysPressed["ArrowUp"] || touchControls["p2-up"] && paddle2.y < gl.canvas.height / 2 - paddle2.dy / 2) {
     paddle2.y += 2;
   }
-  if (keysPressed["s"] && paddle1.y > -gl.canvas.height / 2 + paddle1.dy / 2) {
+  if (keysPressed["s"] || touchControls["p1-down"] && paddle1.y > -gl.canvas.height / 2 + paddle1.dy / 2) {
     paddle1.y -= 2;
   }
-  if (keysPressed["w"] && paddle1.y < gl.canvas.height / 2 - paddle1.dy / 2) {
+  if (keysPressed["w"] || touchControls["p1-up"] && paddle1.y < gl.canvas.height / 2 - paddle1.dy / 2) {
     paddle1.y += 2;
   }
 
@@ -191,8 +202,8 @@ function updateGame() {
     if (!gamePaused) {
       ball.x = 0;
       ball.y = 0;
-      ball.speedx = 1;
-      ball.speedy = 1;
+      ball.speedx = 1.5;
+      ball.speedy = 1.5;
     }
   }
 
@@ -202,14 +213,12 @@ function updateGame() {
     if (!gamePaused) {
       ball.x = 0;
       ball.y = 0;
-      ball.speedx = -1;
-      ball.speedy = 1;
+      ball.speedx = -1.5;
+      ball.speedy = 1.5;
     }
   }
 }
 
-
-// Updated drawing function
 function drawAnimated(timeStamp) {
   if (!lastTime) lastTime = timeStamp;
   const deltaTime = timeStamp - lastTime;
