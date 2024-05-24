@@ -117,7 +117,7 @@ function drawGameObjects() {
   drawRect(paddle2.x, paddle2.y, paddle2.dx, paddle2.dy, paddle2.color);
   drawRect(ball.x, ball.y, ball.dx, ball.dy, ball.color);
   drawRect(middleLine.x, middleLine.y, middleLine.dx, middleLine.dy, middleLine.color);
-  updateScoreDisplay();
+  updateScoreDisplay(0);
 }
 
 function updateScoreDisplay(winner) {
@@ -278,3 +278,9 @@ async function MakeShader(gl, vsfile, fsfile) {
   gl.useProgram(sp);
   return sp;
 }
+
+window.oncontextmenu = function (event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
+};
