@@ -4,7 +4,18 @@ import { drawScene } from "./draw-scene.js";
 let cubeRotation = 0.0;
 let deltaTime = 0;
 
+const vsSource = await fetchShaderSource("./vertex-shader.glsl");
+const fsSource = await fetchShaderSource("./fragment-shader.glsl");
+
 main();
+
+async function fetchShaderSource(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch shader source: ${response.status} ${response.statusText}`);
+    }
+    return await response.text();
+}
 
 function main() {
     const canvas = document.querySelector("#glcanvas");
@@ -17,30 +28,6 @@ function main() {
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-
-    const vsSource = `
-        attribute vec4 aVertexPosition;
-        attribute vec2 aTextureCoord;
-
-        uniform mat4 uModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
-
-        varying highp vec2 vTextureCoord;
-
-        void main(void) {
-            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-            vTextureCoord = aTextureCoord;
-        }
-    `;
-
-    const fsSource = `
-        varying highp vec2 vTextureCoord;
-        uniform sampler2D uSampler;
-
-        void main(void) {
-            gl_FragColor = texture2D(uSampler, vTextureCoord);
-        }
-    `;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 

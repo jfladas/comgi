@@ -1,18 +1,12 @@
-attribute vec3 aVertex;
-attribute vec3 aColor;
+attribute vec4 aVertexPosition;
+attribute vec2 aTextureCoord;
 
-uniform mat4 uModelView;
-uniform mat4 uProjection;
-varying vec3 vColor;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
 
-void main() {
-    vec4 v = uModelView * vec4(aVertex, 1.0);
-    vec4 w = uProjection * v;
-    float z = v[2];
-    float zmin = -1.0, zmax = 1.0;
-    float cmin = 0.1, cmax = 1.0;
-    //vColor = (z - zmin) / (zmax - zmin) * (cmax - cmin) + cmin;
-    vColor = aColor;
+varying highp vec2 vTextureCoord;
 
-    gl_Position = w / w[3];
+void main(void) {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    vTextureCoord = aTextureCoord;
 }
