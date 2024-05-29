@@ -121,8 +121,13 @@ function drawGameObjects() {
 }
 
 function updateScoreDisplay(winner) {
-  document.getElementById("score1").innerText = winner === 1 ? "WIN!" : score1;
-  document.getElementById("score2").innerText = winner === 2 ? "WIN!" : score2;
+  if (winner === 0) {
+    document.getElementById("score1").innerText = score1;
+    document.getElementById("score2").innerText = score2;
+  } else {
+    document.getElementById("score1").innerText = winner === 1 ? "WIN!" : "LOSE!";
+    document.getElementById("score2").innerText = winner === 2 ? "WIN!" : "LOSE!";
+  }
 }
 
 function checkWin() {
