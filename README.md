@@ -8,3 +8,11 @@
 ## BIRDO-CUBE
 *Rotating cube with textures using WebGL*
 ### [> see here <](https://jfladas.github.io/comgi/w5/aufgabe2/)
+
+## OTHER TASKS
+#### [Rectangles](https://jfladas.github.io/comgi/w1/birdo.html)
+#### [Gradient](https://jfladas.github.io/comgi/w2/gradient/birdo.html)
+#### [Gradient Cube](https://jfladas.github.io/comgi/w5/aufgabe1/)
+
+
+
