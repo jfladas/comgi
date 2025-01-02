@@ -24,15 +24,15 @@ body {
     left: 50%;
     width: 100vw;
     text-align: center;
-    transform: translate(-50%, calc(-50% - 30vw));
+    transform: translate(-50%, calc(-50% - 35vh));
 }
 
 #canvas {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, calc(-50% + 25px));
-    height: calc(1vw* 48);
+    transform: translate(-50%, calc(-50% + 5vh));
+    height: 60vh;
 }
 
 #scoreboard {
@@ -40,7 +40,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: calc(1vw* 48);
+    height: 50vh;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -51,7 +51,7 @@ body {
     width: 100px;
     display: flex;
     justify-content: center;
-    transform: translate(0, -15vw);
+    transform: translate(0, -20vh);
     color: var(--purple);
     font-size: 3rem;
     font-weight: bold;
@@ -97,12 +97,8 @@ img {
         height: auto;
     }
 
-    #title {
-        transform: translate(-50%, -75vw);
-    }
-
     #scoreboard {
-        transform: translate(-50%, -37vw);
+        transform: translate(-50%, -50%);
         width: 100vw;
         height: auto;
     }
@@ -132,10 +128,6 @@ img {
         transform: translate(-50%, -50%);
         width: auto;
         height: 80vh;
-    }
-
-    #title {
-        transform: translate(-50%, -75vw);
     }
 
     #scoreboard {
